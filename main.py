@@ -1,9 +1,13 @@
 
 # Breaks up and orders pages of pdf's formatted to print as Tibetan Prayer booklets for Dakini Whisper
+#!/usr/bin/env python3
+# Breaks up and orders pages of pdf's formatted to print as Tibetan Prayer booklets for Dakini Whisper
 # https://www.dakiniswhisper.com/
-import pymupdf
+import argparse
 import os
 from pathlib import Path
+
+import pymupdf
 
 
 def split_pages_and_order(input_path, output_folder, output_file,
@@ -82,14 +86,36 @@ def split_pages_and_order(input_path, output_folder, output_file,
     return pages_split
 
 
-def do_reformat_pdf(name):
-    output_text_name = "ordered"+name
-    split_pages_and_order(input_text_name, "output", output_text_name)
-    print(f'Input {name} converted to {output_text_name}')  # Press ⌘F8 to toggle the breakpoint.
+def do_reformat_pdf(input_path: str):
+    input_name = Path(input_path).name
+    output_text_name = "ordered_" + input_name
+    split_pages_and_order(input_path, "output", output_text_name)
+    print(f"Input {input_name} converted to {output_text_name}")
+
+
+def _parse_args(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Split and reorder pages of a PDF for booklet printing."
+    )
+    parser.add_argument(
+        "input_path",
+        nargs="?",
+        help="Path to the PDF to re-order",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None) -> int:
+    args = _parse_args(argv)
+
+    if not args.input_path:
+        print(" A path to a pdf to re-order should be provided")
+        return 2
+
+    print(f"start to conver {args.input_path}...")
+    do_reformat_pdf(args.input_path)
+    return 0
 
 
 if __name__ == '__main__':
-    input_text_name = "sup-practice.pdf"
-    print(f'start to conver {input_text_name}...')
-
-    do_reformat_pdf(input_text_name)
+    raise SystemExit(main())
