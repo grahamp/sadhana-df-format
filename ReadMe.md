@@ -1,6 +1,12 @@
 # Sadhana PDF Format (CLI)
 
-A small Python command-line tool that **splits each PDF page into a top and bottom half** and then **reorders pages** for booklet-style printing.
+Breaks up and orders pages of pdf's formatted to print as Tibetan Prayer booklets for Dakini Whisper
+https://www.dakiniswhisper.com/
+
+ A path to a pdf to re-order should be provided
+./main.py ./your.pdf
+./main.py ~/Downloads/___Double-VYCurrent-pechaCurrent-April2022.pdf
+
 
 ## Requirements
 
@@ -9,7 +15,8 @@ A small Python command-line tool that **splits each PDF page into a top and bott
 
 ## Setup
 
-Create/activate a virtual environment (optional but recommended), then install dependencies:
 chmod +x setup.sh
 run setup.sh
+Creates and activates a virtual environment , then install dependencies:
+
 
