@@ -53,7 +53,7 @@ def split_pages_and_order(input_path, output_folder, output_file,
 
     # Reorder: move every 4th page (4, 8, 12, ...) to be between page 1 and 2
     n = len(new_pdf)
-    if n > 2:  # Must be at keast 4 pages
+    if n > 2:  # Must be at least 4 pages
         # make a list of current indexes to capture the desired order, Used below..
         new_order = list()
         for page_num in range(n):
