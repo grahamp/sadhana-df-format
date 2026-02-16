@@ -1,88 +1,92 @@
+
 # This is a sample Python script.
-import os
-from cmath import rect
 
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
 import pymupdf
+import os
+from pathlib import Path
 
 
-def split_pdf_to_pages(input_path, output_folder):
-    """
-    Split a PDF file into individual pages.
-
-    Args:
-        input_path (str): Path to the input PDF file
-        output_folder (str): Directory to save individual pages
-    """
-    # Open the PDF document
+def reformat_pdf(input_path, output_folder, output_file,
+                 name_prefix="page",
+                 page_range=None,
+                 preserve_bookmarks=False):
     pdf_document = pymupdf.open(input_path)
 
-    # Create output folder if it doesn't exist
-    import os
-    os.makedirs(output_folder, exist_ok=True)
+    Path(output_folder).mkdir(parents=True, exist_ok=True)
 
-    # Iterate through each page
-    for page_num in range(len(pdf_document)):
-        # Create a new PDF document for this page
-        new_pdf = pymupdf.open()
+    total_pages = len(pdf_document)
+    if page_range:
+        start_page, end_page = page_range
+        start_page = max(1, start_page) - 1
+        end_page = min(total_pages, end_page)
+    else:
+        start_page, end_page = 0, total_pages
 
-        # Insert the current page into the new document
-        new_pdf.insert_pdf(pdf_document, from_page=page_num, to_page=page_num)
+    pages_split = 0
+    new_pdf: pymupdf.Document = pymupdf.open()
 
-        # Save the single-page PDF
-        output_path = os.path.join(output_folder, f"page_{page_num + 1:03d}.pdf")
-        new_pdf.save(output_path)
-        new_pdf.close()
+    for page_num in range(start_page, end_page):
+        src_page = pdf_document[page_num]
+        pr = src_page.rect  # full page rectangle in points
 
-    # Close the original document
+        # Optional: keep your custom width; otherwise use pr.x1
+        clip_width = min(800, pr.width)
+        x0 = pr.x0
+        x1 = pr.x0 + clip_width
+
+        mid_y = pr.y0 + pr.height / 2.0
+
+        top_clip = pymupdf.Rect(x0, pr.y0, x1, mid_y)
+        bottom_clip = pymupdf.Rect(x0, mid_y, x1, pr.y1)
+
+        for clip in (top_clip, bottom_clip):
+            out_page = new_pdf.new_page(width=clip.width, height=clip.height)
+            out_page.show_pdf_page(
+                pymupdf.Rect(0, 0, clip.width, clip.height),
+                pdf_document,
+                page_num,
+                clip=clip
+            )
+            pages_split += 1
+
+    # Reorder: move every 4th page (4, 8, 12, ...) to be between page 1 and 2
+    n = len(new_pdf)
+    if n > 2:
+        new_order = list()
+        for page_num in range(n):
+            if((page_num+1) %4 == 0) and not (page_num == 0) :
+                new_order.append(page_num-3)
+                new_order.append(page_num)
+                new_order.append(page_num-2)
+                new_order.append(page_num-1)
+    else:
+        new_order = list(range(n))
+
+    reordered_pdf = pymupdf.open()
+    for i in new_order:
+        reordered_pdf.insert_pdf(new_pdf, from_page=i, to_page=i)
+
+    output_path = os.path.join(output_folder, output_file)
+    reordered_pdf.save(output_path)
+
+    reordered_pdf.close()
+    new_pdf.close()
     pdf_document.close()
-    print(f"Successfully split PDF into {len(pdf_document)} pages")
+    print(f"Successfully split {pages_split} pages from {input_path}")
+    return pages_split
 
 
-def split_pdf_to_images(input_path, output_folder, image_format="PNG", dpi=150):
-    """
-    Convert PDF pages to image files.
-
-    Args:
-        input_path (str): Path to input PDF
-        output_folder (str): Output directory
-        image_format (str): Image format (PNG, JPEG, etc.)
-        dpi (int): Resolution for images
-    """
-    pdf_document = pymupdf.open(input_path)
-
-    os.makedirs(output_folder, exist_ok=True)
-
-    for page_num in range(len(pdf_document)):
-        page: pymupdf.Page = pdf_document[page_num]
-        x1 = float(350.0)
-        y1 = float(350.0)
-        r : rect = pymupdf.Rect(0, 0,x1, y1)
-        page.clip_to_rect(r)
-        # Create transformation matrix for desired DPI
-        mat = pymupdf.Matrix(dpi / 72, dpi / 72)
-
-        # Render page to image
-        pix: pymupdf.Pixmap = page.get_pixmap(matrix=mat)
-        pix.set_origin(0,600)
-        # Save image
-        output_path = os.path.join(output_folder, f"page_{page_num + 1:03d}.{image_format.lower()}")
-        pix.save(output_path)
-
-    pdf_document.close()
-    print(f"Converted {len(pdf_document)} pages to {image_format} images")
+def do_reformat_pdf(name):
+    output_text_name = "ordered"+name
+    reformat_pdf(input_text_name, "output", output_text_name)
+    print(f'Input {name} converted to {output_text_name}')  # Press ⌘F8 to toggle the breakpoint.
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-    split_pdf_to_images("./sup-practice.pdf", "./output_images")
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    input_text_name = "sup-practice.pdf"
+    print(f'start to conver {input_text_name}...')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    do_reformat_pdf(input_text_name)
