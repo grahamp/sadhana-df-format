@@ -2,3 +2,71 @@
 /output_images/
 ./sup-practice.pdf
 /sup-practice.pdf
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+.profile_default/
+ipython_config.py
+
+# PyInstaller
+*.spec
+
+# ===== PyCharm / IntelliJ =====
+.idea/
+*.iml
+
+# ===== OS junk =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# ===== Logs =====
+*.log
+
+# ===== Env files / secrets =====
+.env
+.env.*
+!.env.example
+
+# ===== Local databases =====
+*.sqlite3
+*.db
+
+# ===== VS Code (if ever used) =====
+.vscode/
+
