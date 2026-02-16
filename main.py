@@ -1,18 +1,15 @@
 
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
+# Breaks up and orders pages of pdf's formatted to print as Tibetan Prayer booklets for Dakini Whisper
+# https://www.dakiniswhisper.com/
 import pymupdf
 import os
 from pathlib import Path
 
 
-def reformat_pdf(input_path, output_folder, output_file,
-                 name_prefix="page",
-                 page_range=None,
-                 preserve_bookmarks=False):
+def split_pages_and_order(input_path, output_folder, output_file,
+                          name_prefix="page",
+                          page_range=None,
+                          preserve_bookmarks=False):
     pdf_document = pymupdf.open(input_path)
 
     Path(output_folder).mkdir(parents=True, exist_ok=True)
@@ -84,7 +81,7 @@ def reformat_pdf(input_path, output_folder, output_file,
 
 def do_reformat_pdf(name):
     output_text_name = "ordered"+name
-    reformat_pdf(input_text_name, "output", output_text_name)
+    split_pages_and_order(input_text_name, "output", output_text_name)
     print(f'Input {name} converted to {output_text_name}')  # Press ⌘F8 to toggle the breakpoint.
 
 
