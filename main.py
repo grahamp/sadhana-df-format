@@ -30,8 +30,9 @@ def reformat_pdf(input_path, output_folder, output_file,
 
     for page_num in range(start_page, end_page):
         src_page = pdf_document[page_num]
-        pr = src_page.rect  # full page rectangle in points
 
+        # first cut Sadhana pdf pages in two pdf pages, so that each Sadhana page (1a, 1b, 2b, etc) is in its own PDF page.
+        pr = src_page.rect  # full page rectangle in points
         # Optional: keep your custom width; otherwise use pr.x1
         clip_width = min(800, pr.width)
         x0 = pr.x0
@@ -41,7 +42,7 @@ def reformat_pdf(input_path, output_folder, output_file,
 
         top_clip = pymupdf.Rect(x0, pr.y0, x1, mid_y)
         bottom_clip = pymupdf.Rect(x0, mid_y, x1, pr.y1)
-
+        # Make a new doc with each original pdf page cropped twice, making a new top page and bottom page.
         for clip in (top_clip, bottom_clip):
             out_page = new_pdf.new_page(width=clip.width, height=clip.height)
             out_page.show_pdf_page(
@@ -51,10 +52,12 @@ def reformat_pdf(input_path, output_folder, output_file,
                 clip=clip
             )
             pages_split += 1
+    # Now we have a new pdf doc with 2x the pages...
 
     # Reorder: move every 4th page (4, 8, 12, ...) to be between page 1 and 2
     n = len(new_pdf)
-    if n > 2:
+    if n > 2:  # Must be at keast 4 pages
+        # make a list of current indexes to capture the desired order, Used below..
         new_order = list()
         for page_num in range(n):
             if((page_num+1) %4 == 0) and not (page_num == 0) :
@@ -66,7 +69,7 @@ def reformat_pdf(input_path, output_folder, output_file,
         new_order = list(range(n))
 
     reordered_pdf = pymupdf.open()
-    for i in new_order:
+    for i in new_order: #generate our new order
         reordered_pdf.insert_pdf(new_pdf, from_page=i, to_page=i)
 
     output_path = os.path.join(output_folder, output_file)
