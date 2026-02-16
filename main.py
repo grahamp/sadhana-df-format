@@ -62,6 +62,9 @@ def split_pages_and_order(input_path, output_folder, output_file,
                 new_order.append(page_num)
                 new_order.append(page_num-2)
                 new_order.append(page_num-1)
+         # Do remaining pages
+        remaining_pages = list(range(n - 4, n))
+        new_order.extend(remaining_pages)
     else:
         new_order = list(range(n))
 
