@@ -1,12 +1,14 @@
 # Sadhana PDF Format (CLI)
 
-Breaks up and orders pages of pdf's formatted to print as Tibetan Prayer booklets for Dakini Whisper
+Breaks up and orders pages of PDFs formatted to print as Tibetan Prayer booklets for Dakini Whisper
 https://www.dakiniswhisper.com/
 
  A path to a pdf to re-order should be provided
-./main.py ./your.pdf
-./main.py ~/Downloads/___Double-VYCurrent-pechaCurrent-April2022.pdf
+python3 ./main.py ./your.pdf
+python3 ./main.py ~/Downloads/___Double-VYCurrent-pechaCurrent-April2022.pdf
+python3 ./main.py ./vy.pdf
 
+The output will be in ./output with "ordered_" prepended to the name
 
 ## Requirements
 

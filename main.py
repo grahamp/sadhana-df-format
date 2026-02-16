@@ -90,7 +90,7 @@ def do_reformat_pdf(input_path: str):
     input_name = Path(input_path).name
     output_text_name = "ordered_" + input_name
     split_pages_and_order(input_path, "output", output_text_name)
-    print(f"Input {input_name} converted to {output_text_name}")
+    print(f"Input {input_name} converted to {output_text_name} The output will be in ./output with ordered_ prepended to the name")
 
 
 def _parse_args(argv=None):
